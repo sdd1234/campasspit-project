@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(node -e \"JSON.parse\\(require\\('fs'\\).readFileSync\\(process.argv[1],'utf8'\\)\\); console.log\\('valid JSON'\\)\" \"c:/Users/KIM/Documents/GitHub/campasspit-project/.claude/settings.local.json\")",
+      "Read(//c/Users/KIM/Documents/GitHub/capstone_design//**)",
+      "Bash(mvn -q -DskipTests compile)",
+      "Bash(mvn -DskipTests compile)",
+      "Bash(mvn clean *)",
+      "Bash(mvn spring-boot:run)",
+      "Bash(netstat -ano)",
+      "Bash(powershell -Command \"Get-Process -Id 21980 | Select-Object Id, ProcessName, StartTime, Path\")",
+      "Bash(taskkill //F //PID 21980)",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/signup -H \"Content-Type: application/json\" -d '{\"email\":\"test@test.com\",\"password\":\"Test1234!\",\"name\":\"테스트\",\"serviceAgree\":true,\"privacyAgree\":true,\"marketingAgree\":false}')",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"test@test.com\",\"password\":\"Test1234!\"}')",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/signup -H \"Content-Type: application/json\" -d '{\"email\":\"test@test.com\",\"password\":\"Test1234!\",\"name\":\"Tester\",\"serviceAgree\":true,\"privacyAgree\":true,\"marketingAgree\":false}')",
+      "Bash(curl -s -X POST http://localhost:8080/api/v1/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"test@test.com\",\"password\":\"Wrong1234!\"}')",
+      "Bash(tail -30 \"C:\\\\\\\\Users\\\\\\\\KIM\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\claude\\\\\\\\c--Users-KIM-Documents-GitHub-campasspit-project\\\\\\\\3b547cf2-94f6-431c-92fa-12056ab59dcc\\\\\\\\tasks\\\\\\\\bjh3wli4r.output\")"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\KIM\\Documents\\GitHub\\campasspit-project\\.claude"
+    ]
+  }
+}

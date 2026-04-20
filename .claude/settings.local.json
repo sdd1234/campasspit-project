@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Bash(gh repo *)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -s \"https://api.github.com/repos/sdd1234/campasspit-project/pulls/1/files\")",
+      "Bash(curl -s \"https://api.github.com/repos/sdd1234/campasspit-project/pulls/1/files?per_page=100\")",
+      "Bash(curl -s \"https://api.github.com/repos/sdd1234/campasspit-project/pulls/1/files?per_page=300\")",
+      "Bash(\"/c/Users/KIM/Downloads/OpenJDK17U-jdk_x64_windows_hotspot_17.0.18_8/jdk-17.0.18+8/bin/java.exe\" -version)"
+    ]
+  }
+}

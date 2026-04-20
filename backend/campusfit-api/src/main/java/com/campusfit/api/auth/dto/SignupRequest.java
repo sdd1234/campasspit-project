@@ -11,8 +11,6 @@ public record SignupRequest(
     @NotBlank @Size(min = 2, max = 20) String name,
     @NotNull Boolean serviceAgree,
     @NotNull Boolean privacyAgree,
-    Boolean marketingAgree,
-    @NotBlank String verificationType,
-    String note
+    Boolean marketingAgree
 ) {
 }

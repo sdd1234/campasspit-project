@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: campusfit-api
+
+  datasource:
+    url: jdbc:h2:mem:campusfit;MODE=MySQL;DB_CLOSE_DELAY=-1;NON_KEYWORDS=VALUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+
+  h2:
+    console:
+      enabled: true
+
+app:
+  jwt:
+    issuer: campus-fit
+    secret: "campus-fit-jwt-secret-key-minimum-256-bits-long-please-change"
+    access-token-minutes: 30
+    refresh-token-days: 14

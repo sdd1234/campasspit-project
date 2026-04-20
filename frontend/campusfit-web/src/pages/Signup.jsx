@@ -1,180 +1,183 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './Signup.css';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signup } from "../api/auth";
 
 function Signup() {
-  const [formData, setFormData] = useState({
-    userId: '',
-    email: '',
-    password: '',
-    name: '',
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    name: "",
     serviceAgree: false,
     privacyAgree: false,
     marketingAgree: false,
-    verificationType: 'STUDENT_ID',
-    note: ''
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = new FormData();
-      data.append('email', formData.userId); // 아이디를 이메일로 사용
-      data.append('password', formData.password);
-      data.append('name', formData.name);
-      data.append('serviceAgree', formData.serviceAgree);
-      data.append('privacyAgree', formData.privacyAgree);
-      data.append('marketingAgree', formData.marketingAgree);
-      data.append('verificationType', formData.verificationType);
-      data.append('note', formData.note);
+    setError("");
+    setSuccess("");
 
-      const response = await axios.post('http://localhost:8080/api/v1/auth/signup', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+    if (form.password.length < 8) {
+      setError("비밀번호는 8자 이상이어야 합니다.");
+      return;
+    }
+    if (form.password !== form.passwordConfirm) {
+      setError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    if (!form.serviceAgree || !form.privacyAgree) {
+      setError("필수 약관에 동의해주세요.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signup({
+        email: form.email,
+        password: form.password,
+        name: form.name,
+        serviceAgree: form.serviceAgree,
+        privacyAgree: form.privacyAgree,
+        marketingAgree: form.marketingAgree,
       });
-      setSuccess('회원가입이 완료되었습니다!');
-      setError('');
-      setTimeout(() => navigate('/login'), 2000);
+      setSuccess("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
-      setError('회원가입 실패: 입력 정보를 확인하세요.');
-      console.error('Signup error:', err);
+      const msg =
+        err.response?.data?.message ||
+        "회원가입 실패: 입력 정보를 확인하세요.";
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="signup-container">
-      <h2>회원가입</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="userId">아이디</label>
-          <input
-            type="text"
-            id="userId"
-            name="userId"
-            value={formData.userId}
-            onChange={handleChange}
-            placeholder="아이디를 입력하세요"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">이메일</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="이메일을 입력하세요"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">비밀번호</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="비밀번호를 입력하세요"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="name">이름</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="이름을 입력하세요"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="verificationType">인증 유형</label>
-          <select
-            id="verificationType"
-            name="verificationType"
-            value={formData.verificationType}
-            onChange={handleChange}
-          >
-            <option value="STUDENT_ID">학생증</option>
-            <option value="FACULTY_ID">교직원증</option>
-          </select>
-        </div>
-        <div className="form-group">
-          <label htmlFor="note">추가 메모 (선택)</label>
-          <textarea
-            id="note"
-            name="note"
-            value={formData.note}
-            onChange={handleChange}
-            placeholder="추가 메모를 입력하세요"
-          />
-        </div>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1>Campus Fit</h1>
+        <h2>회원가입</h2>
 
-        <div className="agreement-container">
-          <h3>개인정보 동의</h3>
-          <div className="form-group">
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="email">이메일</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="example@campus.ac.kr"
+              autoComplete="email"
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="name">이름</label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+              minLength={2}
+              maxLength={20}
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="password">비밀번호 (8자 이상)</label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              value={form.password}
+              onChange={handleChange}
+              minLength={8}
+              autoComplete="new-password"
+              required
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="passwordConfirm">비밀번호 확인</label>
+            <input
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              value={form.passwordConfirm}
+              onChange={handleChange}
+              minLength={8}
+              autoComplete="new-password"
+              required
+            />
+          </div>
+
+          <div className="field-check">
             <label>
               <input
                 type="checkbox"
                 name="serviceAgree"
-                checked={formData.serviceAgree}
+                checked={form.serviceAgree}
                 onChange={handleChange}
                 required
               />
-              서비스 이용약관에 동의합니다 (필수)
+              서비스 이용약관 동의 (필수)
             </label>
           </div>
-          <div className="form-group">
+
+          <div className="field-check">
             <label>
               <input
                 type="checkbox"
                 name="privacyAgree"
-                checked={formData.privacyAgree}
+                checked={form.privacyAgree}
                 onChange={handleChange}
                 required
               />
-              개인정보 처리방침에 동의합니다 (필수)
+              개인정보 처리방침 동의 (필수)
             </label>
           </div>
-          <div className="form-group">
+
+          <div className="field-check">
             <label>
               <input
                 type="checkbox"
                 name="marketingAgree"
-                checked={formData.marketingAgree}
+                checked={form.marketingAgree}
                 onChange={handleChange}
               />
-              마케팅 수신에 동의합니다 (선택)
+              마케팅 수신 동의 (선택)
             </label>
           </div>
-        </div>
 
-        <button type="submit">회원가입</button>
-        <button type="button" onClick={() => navigate('/login')} style={{ marginTop: '10px', backgroundColor: '#6c757d' }}>
-          로그인으로 돌아가기
-        </button>
-      </form>
+          {error && <p className="error">{error}</p>}
+          {success && <p className="success">{success}</p>}
+
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "가입 중..." : "회원가입"}
+          </button>
+        </form>
+
+        <p className="auth-link">
+          이미 계정이 있으신가요? <Link to="/login">로그인</Link>
+        </p>
+      </div>
     </div>
   );
 }

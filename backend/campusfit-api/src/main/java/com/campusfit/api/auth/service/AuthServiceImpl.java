@@ -1,18 +1,15 @@
 package com.campusfit.api.auth.service;
 
 import com.campusfit.api.auth.dto.*;
-import com.campusfit.api.common.enums.FilePurpose;
 import com.campusfit.api.common.exception.BusinessException;
-import com.campusfit.api.domain.*;
-import com.campusfit.api.repository.*;
+import com.campusfit.api.domain.User;
+import com.campusfit.api.repository.UserRepository;
 import com.campusfit.api.security.JwtUtil;
-import com.campusfit.api.storage.FileStorageService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -20,14 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final FileRepository fileRepository;
-    private final StudentVerificationRepository verificationRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final FileStorageService fileStorageService;
 
     @Override
-    public SignupResponse signup(SignupRequest request, MultipartFile verificationFile) {
+    public SignupResponse signup(SignupRequest request) {
         if (userRepository.existsByEmail(request.email())) {
             throw BusinessException.conflict("이미 사용 중인 이메일입니다.");
         }
@@ -43,30 +37,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userRepository.save(user);
 
-        StudentVerification verification = null;
-        if (verificationFile != null && !verificationFile.isEmpty()) {
-            String storedPath = fileStorageService.store(verificationFile);
-            FileEntity fileEntity = FileEntity.builder()
-                    .originalName(verificationFile.getOriginalFilename())
-                    .storedPath(storedPath)
-                    .mimeType(verificationFile.getContentType())
-                    .size(verificationFile.getSize())
-                    .purpose(FilePurpose.STUDENT_VERIFICATION)
-                    .uploadedBy(user)
-                    .build();
-            fileRepository.save(fileEntity);
-
-            verification = StudentVerification.builder()
-                    .user(user)
-                    .file(fileEntity)
-                    .verificationType(request.verificationType() != null ? request.verificationType() : "STUDENT_ID")
-                    .note(request.note())
-                    .build();
-            verificationRepository.save(verification);
-        }
-
-        return new SignupResponse(user.getId(), user.getEmail(), user.getStatus().name(),
-                verification != null ? verification.getStatus().name() : null);
+        return new SignupResponse(user.getId(), user.getEmail(), user.getStatus().name(), null);
     }
 
     @Override
@@ -84,6 +55,14 @@ public class AuthServiceImpl implements AuthService {
 
         return new LoginResponse(accessToken, refreshToken, user.getId(), user.getEmail(), user.getName(),
                 user.getRole().name());
+    }
+
+    @Override
+    public void resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> BusinessException.badRequest("존재하지 않는 이메일입니다."));
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Override

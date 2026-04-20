@@ -1,21 +1,87 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  font-family: 'Segoe UI', 'Noto Sans KR', system-ui, sans-serif;
+  --primary: #4a6fe3;
+  --primary-hover: #3558c8;
+  --primary-light: #eef1fd;
+  --danger: #e35a4a;
+  --danger-hover: #c24131;
+  --success-color: #3ab87a;
+  --text: #1c1c2e;
+  --muted: #6b7684;
+  --border: #e2e6ea;
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  font-size: 14px;
+  color: var(--text);
 }
+body { background: var(--bg); line-height: 1.55; }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+.auth-page {
   min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #f0f4ff, #e8ecfe);
+  padding: 24px;
 }
+.auth-card {
+  width: min(440px, 100%);
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(74, 111, 227, 0.1);
+  padding: 36px 32px;
+}
+.auth-card h1 { font-size: 1.6rem; color: var(--primary); margin-bottom: 4px; }
+.auth-card h2 { font-size: 1.1rem; color: var(--muted); margin-bottom: 24px; font-weight: 500; }
+.auth-link { margin-top: 16px; text-align: center; color: var(--muted); font-size: 0.9rem; }
+.auth-link a { color: var(--primary); text-decoration: none; font-weight: 500; }
 
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.field label { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+.field-check { display: flex; align-items: center; margin-bottom: 8px; }
+.field-check label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9rem; color: var(--text); }
+
+input, select, textarea {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text);
+  background: #fff;
+  transition: border-color 0.15s;
+  width: 100%;
 }
+input:focus, select:focus { outline: none; border-color: var(--primary); }
+input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: 100%;
+  margin-top: 8px;
+}
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: #dde5fa; }
+
+.error { color: var(--danger); font-size: 0.88rem; margin: 8px 0; }
+.success { color: var(--success-color); font-size: 0.88rem; margin: 8px 0; }
